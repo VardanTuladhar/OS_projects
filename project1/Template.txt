@@ -1,0 +1,7 @@
+Operations:	min cycles	max cycles
+CALCULATE 	5		150
+CALCULATE 	10		300	
+I/O		30		200	
+CALCULATE 	15		140
+I/O		40		250
+
