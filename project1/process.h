@@ -5,8 +5,8 @@
 using namespace std;
 class process{
 	public:
-		vector <string> Op;
-		vector <int> Op_cycles;
+
+		vector <operation> process_operations;
 		process(string templat);
 
 };

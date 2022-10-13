@@ -9,7 +9,7 @@ int main()
 	//debugging flag
 	bool debugging = true;
         //intial user interface	
-	int process_count, Template_count;
+	int process_count, Template_count, cycle_count;
 	cout << "Hello and Welcome Vardan's OS simulator!!!" << endl;
 	cout << "How many processes would you like to create:";
 	cin >> process_count;
@@ -45,10 +45,9 @@ int main()
 	//creating processes
 	for (int i = 0; i < templates.size(); i++)
 	{
-		cout << "Enter template you would like to use for process " << i << ":";
+		cout << "Enter template you would like to use for process " << i+1 << ":";
 		cin >> temp_selection;
 		
-
 
 	}
 	int cycle_count;
