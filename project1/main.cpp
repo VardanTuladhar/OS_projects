@@ -51,6 +51,10 @@ int main()
 
 
 	}
+	int cycle_count;
+	cout << "Please enter how many cycles you would like the simulator to run";
+	cin >> cycle_count;
+
 //	OS_sim sim1( template1);
 	return 0;
 
