@@ -1,12 +1,14 @@
 #include <iostream>
-//#include "OS_sim.h"
+#include "process.h"
 #include <fstream>
 #include <vector>
 using namespace std;
 
 int main()
 {
-	bool debugging = true; 
+	//debugging flag
+	bool debugging = true;
+        //intial user interface	
 	int process_count, Template_count;
 	cout << "Hello and Welcome Vardan's OS simulator!!!" << endl;
 	cout << "How many processes would you like to create:";
@@ -22,7 +24,6 @@ int main()
 		cout << Template_count << endl;
 	}
 	vector <string> templates;
-	string template1;
 	for (int i = 0; i < Template_count; i++)
 	{
 		cout << "Please enter the txt files for the template"<< endl;
@@ -32,8 +33,23 @@ int main()
 		{
 			cout << templates[i] << endl;
 		}
-
 	
+	}
+	//list intger buffer of for template
+	for (int i = 0; i < templates.size(); i++)
+	{
+		cout << i+1 <<". " <<templates[i];
+
+	}
+	int temp_selection;
+	//creating processes
+	for (int i = 0; i < templates.size(); i++)
+	{
+		cout << "Enter template you would like to use for process " << i << ":";
+		cin >> temp_selection;
+		
+
+
 	}
 //	OS_sim sim1( template1);
 	return 0;
