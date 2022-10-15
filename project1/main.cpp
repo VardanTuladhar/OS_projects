@@ -77,21 +77,53 @@ int main()
 	int scheduling_choice;
 	cout << "What scheduling type will you use: " << endl <<"1. First come first serve" << endl <<"2. Shortest job first" << endl;
 	cin >> scheduling_choice;
-	vector <process> processes_ordered;
 	//enter create 
 	while (1)
 		{
 		if (scheduling_choice == 1)
 			{	
 			//reoder based on first come first server
-			processes_orderd = processes;
+			
 			break;
 			}	
 		else if( scheduling_choice == 2)
 			{
 			//reorder based on shortest job
 			//create a total cycle attribute of the process
-			//
+			
+			//bubble sort algorithm
+			for (int i = 0; i < processes.size(); i++)
+				{
+					for (int j = 0; j < processes.size() - 1; j++)
+						{
+							if(processes[j].total_cycles > processes[j+1].total_cycles)
+							{
+								swap(processes[j], processes[j+1]); 
+
+							}
+							
+						}
+
+				}	
+			
+			if(debugging == true)
+			{
+				for (int i = 0; i < process_count; i++)
+					{
+						//process number
+						cout << "Process "<< processes[i].process_num << endl;
+						//process state
+						cout << "Process state: "<< processes[i].state << endl;
+						cout << "Total Cycle Count: " << processes[i].total_cycles << endl;
+						for (int j = 0; j < processes[i].process_operations.size(); j++)
+						{
+							cout << "process operation "<< j << " name is " << processes[i].process_operations[j].Op << endl;
+							cout << "process operations " << j << " cycle is " << processes[i].process_operations[j].Op_cycles << endl;
+	
+						}
+			
+					}
+			}	
 			break;
 			}
 		else
@@ -103,9 +135,10 @@ int main()
 		}
 	while (processes.size() > 0 && cycle_count > 0)
 		{
-		int i = 0;
-		//decrement 
-
+		//1. change state of process 
+		//a. check the  
+		
+		
 
 
 
