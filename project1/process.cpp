@@ -27,9 +27,13 @@ process :: process(string templa, int a)
 	state = "new";
 	process_num = a;
 	total_cycles = ttemp_cycles;
+	priority = 1;
+	
+}
+void process :: setpriority(int a)
+{
 
-
-
+priority = a;
 
 
 }
