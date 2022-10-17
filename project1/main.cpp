@@ -133,11 +133,18 @@ int main()
 			}	
 	
 		}
+	int current_process, current_operation = 0;
 	while (processes.size() > 0 && cycle_count > 0)
 		{
+		
 		//1. change state of process 
 		//a. check the  
-		
+		if (processes[current_process].state == "new")
+
+			{
+				processes[current_process].state = "ready"
+
+			}
 		
 
 
