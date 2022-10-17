@@ -6,10 +6,6 @@
 #include "operation.h"
 using namespace std;
 class PCB{
-	private:
-		vector <string> Registers;
-		vector <string> Possible_files_open;
-		vector <string> PIO;
 	public:
 
 		//state of process
