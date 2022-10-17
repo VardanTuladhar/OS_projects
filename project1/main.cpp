@@ -187,6 +187,12 @@ int main()
 			}	
 	
 		}
+	//set_PCB
+	for(int i = 0; i < processes.size(); i++)
+		{
+			
+		}
+
 	int i,j = 0;
 	while (cycle_count > 0)
 		{
