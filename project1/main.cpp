@@ -1,5 +1,8 @@
 #include <iostream>
 #include "process.h"
+#include "functions.h"
+#include "state.h"
+#include "PCB.h"
 #include <fstream>
 #include <vector>
 #include <stdlib.h>
@@ -11,7 +14,6 @@ int main()
 	//debugging flag
 	bool debugging = true;
         //intial user interface	
-	vector <int> priority;
 	int process_count, Template_count, cycle_count;
 	cout << "Hello and Welcome Vardan's OS simulator!!!" << endl;
 	cout << "How many processes would you like to create: ";
@@ -85,6 +87,8 @@ int main()
 		{
 		if (scheduling_choice == 1)
 			{	
+			vector <int> priority;
+
 			//create vector that will contain priority numbers
 			for(int i = 1; i <= processes.size(); i++)
 			{
@@ -185,84 +189,14 @@ int main()
 			cout << "You did not pick an apropraite answer please pick again: ";
 		       	cin >> scheduling_choice;	
 			}	
+//--------End of intial paramenters---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	
+	
+	
+	
 	
 		}
-	//set_PCB
-	for(int i = 0; i < processes.size(); i++)
-		{
-			
-		}
 
-	int i,j = 0;
-	while (cycle_count > 0)
-		{
-		//1. change state of process 
-		//a. change state of the process
-		if(processes[i].state == "new")
-			{
-				processes[i].state = "ready";	
-			}
-		else if(processes[i].state == "ready")
-			{
-				processes[i].state = "running";
-			}
-		else if(processes[i].state == "running")
-			{
-				if(processes[i].process_operations[j].Op == "CALCULATE")
-					{
-						processes[i].process_operations[j].Op_cycles--;	
-						cycle_count--;
-					}
-				else if(processes[i].process_operations[j].Op == "I/O")
-					{
-						processes[i].state = "waiting";
-
-					}
-				if(processes[i].process_oprations[j].Op_cycles == 0)
-					{
-						if(j < processes[i].process_operations.size())
-							{
-								j++;
-							}
-						else
-							{
-								processes[i].state = "terminated";
-							}
-					}
-			}
-		else if(process[i].state == "waiting")
-			{
-				if(processes[i].process_operations[j].Op == "I/O")
-					{
-						processes[i].process_operations[j].Op_cycles--;	
-						cycle_count--;
-					}
-				else
-					{
-						processes[i].state = "ready";
-					}
-				if(processes[i].process_oprations[j].Op_cycles == 0)
-					{
-						j++;
-					}
-
-
-			}
-		else
-			{
-				if(i < processes.size())
-					{
-						i++;
-					}
-				else
-					{
-						break;
-					}	
-				
-
-			}
-
-		}
 	cout << "program is finished";
 	return 0;
 
