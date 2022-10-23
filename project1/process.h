@@ -14,7 +14,7 @@ class process{
 		int process_num, total_cycles;
 		int priority;	
 	public:
-		
+		int get_process_num();		
 		vector <operation> process_operations;
 		process(string templat, int a);
 		void setpriority(int a);
@@ -24,6 +24,7 @@ class process{
 		int getpriority();
 		string get_currentopname();
 		int get_currentopcycle();
-		void dec_currentopcycle();
+		void dec_currentopcycle(bool &crit);
+		bool current_op_crit();
 };
 #endif

@@ -77,22 +77,18 @@ int main()
 	if(debugging == true)
 	{
 		new_state.print_processes_in_state();
-		cout << new_state.get_total_cycles()<< endl;
+		//cout << new_state.get_total_cycles()<< endl;
 	}
 	//Enter the number of cycles you would like the sim to run	
 	cout << endl << "Please enter how many cycles you would like the simulator to run: ";
 	cin >> cycle_count;
 	//Enter the scheduling type you will use
 	int scheduler;
-	int TCN = new_state.get_total_cycles();
 	state ready(30, "ready");
 	state running(1, "run");
 	state waiting(30, "wait");
 	state terminate(30, "terminate");
-	for(int i = 0; i < new_state.get_state_size(); i++)
-	{
-		ready.swap_states(new_state, i);
-	}
+	ready.admitt(new_state);
 	if (debugging  == true)
 		{
 			cout << "--------------NEW---------------------------"<<endl;
@@ -104,8 +100,13 @@ int main()
 	
 	cout << "Enter scheduling choice "<< endl << "1. priority\n2. shorts job first" << endl;
 	cin >> scheduler;
+	int UI = 1;
+	int current_crit_process;
+	bool process_in_crit = false;
 //--End of intial paramenters---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-	while(TCN >= 0 && cycle_count >= 0)
+	while(UI == 1)
+	{
+	while(cycle_count >= 0)
 		{
 			//if nothing is running and something is ready schedule and move
 			if( running.get_state_size() < 1 && ready.get_state_size() > 0)
@@ -117,7 +118,7 @@ int main()
 							if (debugging  == false)
 								{
 									ready.print_processes_in_state();
-									cout << ready.get_total_cycles()<< endl;
+									//cout << ready.get_total_cycles()<< endl;
 								}				
 						}
 					else if (scheduler == 2)
@@ -126,7 +127,7 @@ int main()
 							if (debugging  == false)
 								{
 									ready.print_processes_in_state();
-									cout << ready.get_total_cycles()<< endl;
+									//cout << ready.get_total_cycles()<< endl;
 								}
 						}
 					else
@@ -138,7 +139,12 @@ int main()
 				
 					//take from ready to running
 					running.swap_states(ready, 0);
-					if (debugging  == true)
+					if (running.process_done(0) == true)
+					{
+						terminate.swap_states(running, 0);
+					}
+
+					/*if (debugging  == true)
 						{
 							cout << "--------------Running---------------------------"<<endl;
 							running.print_processes_in_state();
@@ -147,24 +153,65 @@ int main()
 							ready.print_processes_in_state();
 							//cout << ready.get_total_cycles()<< endl;
 
-						}
+						}*/
 
 			
-				//running.dec_currentopcycle(0);	
+			//	running.dec_currentopcycle(0);	
 			}
 			//if there is something that running
 			
 			if (running.get_state_size() > 0)
 				{
+					if (running.process_done(0) == true)
+					{
+						terminate.swap_states(running, 0);
+
+					
+					if(ready.get_state_size() > 0)
+					{
+						if(scheduler == 1)
+							{
+								ready.priority_schedule();			
+							}
+						else if (scheduler == 2)
+							{
+								ready.sjf();
+							}
+						running.swap_states(ready, 0);
+					}
+
+					}
 					//check if we are still running a calc
-					if (running.get_operation(0) == "CALCULATE")
-					{	
-						running.dec_currentopcycle(0);
+					else if (running.get_operation(0) == "CALCULATE")
+					{	//if this operation is critical and nothing else is critical then say this is critical
+						if(running.process_current_op_crit(0)== true)
+						{
+							if (process_in_crit == true)
+							{	
+								if(current_crit_process == running.processes_in[0].get_process_num())
+								{
+									running.dec_currentopcycle(0, process_in_crit);
+								}
+							}
+							else
+							{
+								current_crit_process = running.processes_in[0].get_process_num();	
+								process_in_crit = true;
+								running.dec_currentopcycle(0, process_in_crit);
+							}
+
+						}
+						else
+						{
+							running.dec_currentopcycle(0, process_in_crit);
+						}
 					}
 					else
 					{
 						//move to waiting state
 						waiting.swap_states(running,0); 
+						if(ready.get_state_size() >0)
+						{
 						if(scheduler == 1)
 							{
 								ready.priority_schedule();			
@@ -173,22 +220,10 @@ int main()
 							{
 								ready.sjf();
 							}
+						}
 					
 					}
-					/*if (running.processes_in[0].process_operations.empty() == true)
-					{
-						terminate.insert_process(running.processes_in[0]);
-						running.processes_in.erase(running.processes_in.begin());
-						if(scheduler == 1)
-							{
-								ready.priority_schedule();			
-							}
-						else if (scheduler == 2)
-							{
-								ready.sjf();
-							}
-
-					}*/					
+										
 					
 
 						
@@ -199,19 +234,37 @@ int main()
 			{
 				for (int i = 0; i < waiting.get_state_size();i++)
 					{
-						/*if (waiting.processes_in[i].process_operations.empty() == true)
-						{
-							ready.insert_process(waiting.processes_in[i]);
-							waiting.processes_in.erase(waiting.processes_in.begin() + i);
-						}*/
+						
 
 						//if the current operation is I/O we'll decrement
 						if(waiting.get_operation(i) == "I/O")
 						{
-							waiting.dec_currentopcycle(i);
+							if(waiting.process_current_op_crit(i)== true)
+								{
+									if (process_in_crit == true)
+										{	
+											if(current_crit_process == waiting.processes_in[i].get_process_num())
+												{
+													waiting.dec_currentopcycle(i, process_in_crit);
+												}
+										}
+									else
+										{
+											current_crit_process = waiting.processes_in[i].get_process_num();	
+											process_in_crit = true;
+											running.dec_currentopcycle(i, process_in_crit);
+										}
+					
+								}
+							else	
+									{
+										waiting.dec_currentopcycle(i, process_in_crit);
+									}
 						}
 						else
 						{
+							if(ready.get_state_size() > 0)
+							{
 							if(scheduler == 1)
 							{
 								ready.priority_schedule();			
@@ -220,6 +273,16 @@ int main()
 							{
 								ready.sjf();
 							}
+							}
+							ready.swap_states(waiting, i);
+						}
+						if (waiting.process_done(i) == true && running.get_state_size() < 1)
+						{
+								terminate.swap_states(waiting, i);
+
+						}
+						else if (waiting.process_done(i) == true && running.get_state_size() >= 1)
+						{
 							ready.swap_states(waiting, i);
 						}
 
@@ -229,27 +292,44 @@ int main()
 
 
 
-						if (debugging  == true)
+			if (debugging  == true)
 				{
 					cout << "--------------Running---------------------------"<<endl;
 					running.print_processes_in_state();
-					//cout << running.get_total_cycles()<< endl;
+				//	cout << running.get_total_cycles()<< endl;
 					cout << "-------------Ready-----------------------------"<<endl;
 					ready.print_processes_in_state();
-					//cout << ready.get_total_cycles()<< endl;
+				//	cout << ready.get_total_cycles()<< endl;
 					cout << "--------------Waiting---------------------------"<<endl;
 					waiting.print_processes_in_state();
-					cout << waiting.get_total_cycles()<< endl;
+				//	cout << waiting.get_total_cycles() << endl;
 					cout << "-------------Terminated-----------------------------"<<endl;
 					terminate.print_processes_in_state();
-					//cout << terminate.get_total_cycles()<< endl;
+				//	cout << terminate.get_total_cycles()<< endl;
 				}
 
-			TCN--;
+			
 			cycle_count--;
-			cout << "TCN: " << TCN <<endl << "input: " <<cycle_count << endl;
+			
 
 		}
+	int command;
+	cout << "The simulation is finished, enter command:\n" << "1. quit\n" << "2. run more cycles\n" << "3. display PCB\n";
+       	cin >> command;
+	switch(command)
+	{
+		case 1: 
+			UI = 0;
+			break;
+		case 2:
+			cin >> cycle_count;
+			break;
+		case 3:
+			cout << "TBD";
+			UI = 0;
+			break;
+	}	
+	}
 	cout << "program is finished";
 	return 0;
 

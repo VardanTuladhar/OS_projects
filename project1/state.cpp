@@ -9,7 +9,6 @@ state :: state(int set_max_size, string set_state)
 	{
 		statem = set_state;
 		max_size = set_max_size;
-		total_cycle = 0;
 	}
 //get a process in a state
 process state :: get_process(int i)
@@ -27,7 +26,6 @@ void state :: insert_process(process a)
 	{	
 		a.set_state(this->statem);
 		this->processes_in.push_back(a);
-		this->total_cycle += a.get_total_cycles();
 	}
 //print the processes in the states
 void state :: print_processes_in_state()
@@ -38,20 +36,21 @@ void state :: print_processes_in_state()
 
 		}
 }
-//get total cycles in the state
-int state :: get_total_cycles()
-{
-	return this->total_cycle;
-}
 //switch a process in the self state to the a state
-void state :: swap_states(state a, int i)
+void state :: swap_states(state &a, int i)
 {
+	
 	//take a process from the self state
 	this->insert_process(a.get_process(i));	
 	//delete the process from the state
-	a.processes_in.clear();	
+	a.delete_process(i);	
 	//add to the a state
 
+}
+void state :: admitt(state &a)
+{
+ this->processes_in = a.processes_in;
+ a.processes_in.clear();
 }
 //get the number of processes in the state
 int state :: get_state_size()
@@ -98,10 +97,9 @@ int state :: get_opcycle(int i)
 {
 	return this->processes_in[i].get_currentopcycle();
 }
-void  state :: dec_currentopcycle(int i)
+void  state :: dec_currentopcycle(int i, bool &crit)
 {
-	this->total_cycle--; 
-	this->processes_in[i].dec_currentopcycle();
+	this->processes_in[i].dec_currentopcycle(crit);
 }
 bool state :: process_done(int i)
 {
@@ -110,4 +108,11 @@ bool state :: process_done(int i)
 	else
 	{return false;}
 
+}
+bool state :: process_current_op_crit(int i)
+{
+	if(this->processes_in[i].current_op_crit() )
+		return true;
+	else 
+		return false;
 }

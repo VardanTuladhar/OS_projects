@@ -25,6 +25,10 @@ process :: process(string templa, int a)
 	priority = 1;
 	
 }
+int process :: get_process_num()
+{
+	return this->process_num;
+}
 //set the priority of the process
 void process :: setpriority(int a)
 {
@@ -46,6 +50,7 @@ void process:: display_process()
 			{
 				cout << "process operation "<< j << " name is " << this-> process_operations[j].Op << endl;
 				cout << "process operations " << j << " cycle is " <<this -> process_operations[j].Op_cycles << endl;
+				cout << "process operations " << j << " crit status " <<this -> process_operations[j].crit << endl;
 			}
 
 }
@@ -77,14 +82,23 @@ int process :: get_currentopcycle()
 	return this->process_operations[0].Op_cycles;
 }
 //decrease the number of cycles in the current operation and the total cycles
-void process :: dec_currentopcycle()
+void process :: dec_currentopcycle(bool &crit)
 {
 	this->process_operations[0].Op_cycles--;
 	this->total_cycles--;
 	if (get_currentopcycle() == 0)
 	{
 		this->process_operations.erase(process_operations.begin());
+		if (crit == true)
+		{
+			crit = false;
+		}
 	}
 
 }
-
+bool process :: current_op_crit()
+{
+	if(this -> process_operations[0].crit == 1)
+		return true;
+	else return false;
+}
