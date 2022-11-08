@@ -7,33 +7,37 @@
 #include <time.h>
 using namespace std;
 
-process :: process(string templa, int a)
+process :: process()
+{
+	
+	state = "new";
+	process_num = 0;
+	total_cycles = 0;	
+}
+void process :: set_process_num(int a)
+{
+	this->process_num = a; 
+}
+void process ::set_operations(string temp)
 {
 	string Op_name;
 	int mincycle, maxcycle, cycles, ttemp_cycles = 0;
 	string firstline;
 	srand (time(NULL));
-	ifstream utemplate(templa, ios::in);
+	ifstream utemplate(temp, ios::in);
 	getline(utemplate, firstline);
 	while (utemplate >>Op_name >> mincycle >> maxcycle)
 	{
 		
 		cycles = rand() % (maxcycle - mincycle +1) + mincycle;
 		operation pro_op(Op_name, cycles);
-		process_operations.push_back(pro_op);
+		this->process_operations.push_back(pro_op);
 		ttemp_cycles += cycles;		
 
 	}
-	state = "new";
-	process_num = a;
-	total_cycles = ttemp_cycles;
-	priority = 1;
-	
-}
+
+}	
 void process :: setpriority(int a)
 {
-
-priority = a;
-
-
+	this->priority = a;
 }

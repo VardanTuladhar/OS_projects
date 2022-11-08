@@ -6,8 +6,7 @@
 #include "operation.h"
 using namespace std;
 class PCB{
-	public:
-
+	private:
 		//state of process
 		string process_state;
 		//process number
@@ -24,7 +23,9 @@ class PCB{
 		vector <string> IO;
 		//acounting info
 		//address of the PCB how?
-		PCB(process a);
+	public:
+		PCB();
+		void set_state(string updated_state);
 
 };
 #endif

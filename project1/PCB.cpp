@@ -13,7 +13,6 @@ PCB :: PCB(process a)
 		vector <string> PIO = {"mouse", "keyboard", "camera"};
 		process_state = a.state;
 		process_number = a.process_num;
-		address_instruct = &(a.process_operations[1]);		
 		srand(time(NULL));
 		int num_regu, num_openf, num_IO;
 		num_regu = rand()% + Registers.size();
@@ -38,4 +37,9 @@ PCB :: PCB(process a)
 				IO.push_back(PIO[IO_choice]);
 				PIO.erase(open_files.begin() +IO_choice);	
 			}
+	
+	}
+void PCB :: update_state(process a)
+	{
+		process_state = a.state;
 	}
