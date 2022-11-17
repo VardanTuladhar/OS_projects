@@ -64,7 +64,7 @@ void commit(vector <process> &a, vector <process> &b)
 	string ready = "ready";
 	for (int i = 0; i < b.size(); i++)
 			{
-				b[i].set_state(ready);
+				b.at(i).set_state(ready);
 			
 			}
 
@@ -80,10 +80,12 @@ for (int i = 0;  i < a.size(); i++)
 	}
 cout << endl;
 }
-void process_swap_states(vector <process> &a, vector <process> &b, int the_process)
+void process_swap_states(vector <process> &a, vector <process> &b, int the_process, string state)
 {
+
+	b.push_back(a.at(the_process));
+	a.erase(a.begin()+the_process);
+	b.at(b.size() -1).set_state(state);
 }
-
-
 
 

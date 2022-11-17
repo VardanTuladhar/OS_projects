@@ -40,6 +40,8 @@ class process{
 		string get_operation_name(int a);
 		//get the current operations cycles
 		int get_operation_cycles(int a);
+		//decrement the processes current cylce
+		void decrement();
 
 
 

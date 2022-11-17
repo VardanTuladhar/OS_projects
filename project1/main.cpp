@@ -107,7 +107,9 @@ int main()
 					{
 						commit(new_queue, ready_queue);
 					}
-					if(running.size() == 0)
+					if(running.size() == 0) 
+						{
+						if(ready_queue.size() > 0)
 						{	
 							while (1)
 								{
@@ -129,10 +131,80 @@ int main()
 										}	
 	
 								}
+							
+							process_swap_states(ready_queue, running, 0, "running");
+						}
+						}
+					else
+						{
+							if(running.at(0).get_operations_size() > 0)
+								{
+									if(running.at(0).get_operation_name(0) == "CALCULATE")
+										{
+											running.at(0).decrement();
+										}
+									else
+										{
+											process_swap_states(running, wait_queue, 0, "waiting");
+											if (scheduling_choice == 1)
+												{
+													priority_schdule(ready_queue);	
+												}	
+											else if( scheduling_choice == 2)
 
+												{
+													shortest_first(ready_queue);	
+												}
 
+										}	
+								}
+							else
+								{
+									process_swap_states(running, terminated,0, "terminated" );
+								}
 
 						}
+					if(wait_queue.size() > 0)
+						{
+							for(int i = 0; i < wait_queue.size(); i++)
+								{
+								if(wait_queue.at(i).get_operations_size() == 0)
+										{
+											process_swap_states(wait_queue, ready_queue, i, "ready");
+												if (scheduling_choice == 1)
+													{
+														priority_schdule(ready_queue);	
+													}	
+												else if( scheduling_choice == 2);
+													{
+														shortest_first(ready_queue);	
+													}
+										}
+
+									if(wait_queue.at(i).get_operation_name(0) == "I/O")
+										{
+											wait_queue.at(i).decrement();
+										}
+									
+
+									else
+										{
+											process_swap_states(wait_queue, ready_queue, i, "ready");
+											if (scheduling_choice == 1)
+												{
+													priority_schdule(ready_queue);	
+												}	
+											else if( scheduling_choice == 2)
+
+												{
+													shortest_first(ready_queue);	
+												}
+
+
+										}
+								}
+						}
+
 				cout << "cycle: " << cycle_count << endl;
 				print_state(new_queue, "new");
 				print_state(ready_queue, "ready");
@@ -141,11 +213,15 @@ int main()
 				print_state(terminated, "terminated");
 				cycle_count--;
 				}
-			cout<< "End of simulation options:" <<endl << "1. exit"<<endl;
+			cout<< "End of simulation options:" <<endl << "1. exit"<<endl << "2. another run"<< endl;
 			cin >> end_choice;
 			switch(end_choice){
 				case 1:
 					run = 0;
+					break;
+				case 2:
+					cout << "enter number of cycles: ";
+					cin >>cycle_count;
 					break;
 				default:
 					run = 0;

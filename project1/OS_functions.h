@@ -9,4 +9,4 @@ void priority_schdule( vector <process> &a);
 void commit(vector <process> &a, vector <process> &b);
 void print_process(process a);
 void print_state(vector <process> a, string state);
-void process_swap_states(vector <process> &a, vector <process> &b, int the_process);
+void process_swap_states(vector <process> &a, vector <process> &b, int the_process, string state);

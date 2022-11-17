@@ -72,4 +72,12 @@ int process :: get_operation_cycles(int a)
 {
 	return this->process_operations.at(a).Op_cycles;
 }
-
+void process :: decrement()
+{
+	this->process_operations.at(0).Op_cycles--;
+	this->total_cycles--;
+	if(this->get_operation_cycles(0) <= 0)
+		{
+			this->process_operations.erase(process_operations.begin());
+		}
+}
