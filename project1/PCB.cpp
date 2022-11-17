@@ -6,13 +6,11 @@
 #include <stdlib.h>
 #include <time.h>
 using namespace std;
-PCB :: PCB(process a)
+PCB :: PCB()
 	{
 		vector <string> Registers = {"$v0", "$v1", "$a0","a1", "$t0", "$t1", "$t2","t3", "$t4", "$t5", "$t6","t7", "$t8", "$t9", "$t10","s1", "s0" };
 		vector <string> Possible_files_open = {"file.txt", "file1.txt"};
 		vector <string> PIO = {"mouse", "keyboard", "camera"};
-		process_state = a.state;
-		process_number = a.process_num;
 		srand(time(NULL));
 		int num_regu, num_openf, num_IO;
 		num_regu = rand()% + Registers.size();
@@ -39,7 +37,15 @@ PCB :: PCB(process a)
 			}
 	
 	}
-void PCB :: update_state(process a)
+void PCB :: set_state(string updated_state)
 	{
-		process_state = a.state;
+		this->process_state = updated_state;
+	}
+void PCB :: set_process_num(int a)
+	{	
+		this->process_number = a;
+	}
+void PCB :: set_priority_num(int a)
+	{
+		this->priority_number = a;
 	}

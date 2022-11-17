@@ -11,6 +11,8 @@ class PCB{
 		string process_state;
 		//process number
 		int process_number;
+		//prority number
+		int priority_number;
 		//address of the next intruction we start from zero: address = hex(process_number * process.operations.size + 1) 
 		int address_instruct;
 		//will have all the registers listed in the Register vector then randomly some of those vectors will be put int vectors used
@@ -26,6 +28,8 @@ class PCB{
 	public:
 		PCB();
 		void set_state(string updated_state);
+		void set_process_num( int a);
+		void set_priority_num(int a);
 
 };
 #endif
