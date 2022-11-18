@@ -108,6 +108,7 @@ int main()
 		{
 			while( cycle_count > 0)
 				{
+					cout << "ready: " <<ready_queue.size() << endl << "running: " << running.size() << endl << "wait_queue: " << wait_queue.size() << endl; 
 					if(new_queue.size() != 0)
 					{
 						commit(new_queue, ready_queue);
