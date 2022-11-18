@@ -8,6 +8,7 @@ class operation{
 	public:
 		string Op;
 		int Op_cycles;
+		int crit;
 		operation(string a, int b);
 
 };

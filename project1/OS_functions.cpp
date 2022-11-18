@@ -53,7 +53,8 @@ void print_process(process a)
 		for (int g = 0; g < a.get_operations_size(); g++)
 			{
 				cout << "process operation "<< g << " name is " << a.get_operation_name(g) << endl;
-				cout << "process operations " << g << " cycle is " << a.get_operation_cycles(g) << endl;	
+				cout << "process operations " << g << " cycle is " << a.get_operation_cycles(g) << endl;
+				cout << "crit: " << a.get_crit(g) <<endl;	
 			}
 	}
 

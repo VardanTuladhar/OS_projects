@@ -1,6 +1,6 @@
 #include <iostream>
 #include "process.h"
-#include "PCB.h"g
+#include "PCB.h"
 #include "OS_functions.h"
 #include <fstream>
 #include <vector>
@@ -15,6 +15,8 @@ int main()
 	bool debugging = false;
         //intial user interface	
 	int process_count, Template_count, cycle_count;
+	bool critflag = false;
+	int processflag;
 	cout << "Hello and Welcome Vardan's OS simulator!!!" << endl;
 	cout << "How many processes would you like to create: ";
 	cin >> process_count;
@@ -67,6 +69,7 @@ int main()
 		new_queue.push_back(temp_process);	
 
 	}
+	templates.clear();
 	vector <int> priority;
 	for(int i = 1; i <= new_queue.size(); i++)
 	{
@@ -87,12 +90,14 @@ int main()
 		g++;
 	//repeat until size of prority vector is 0
 	}
+	priority.clear();
 	//print_state(new_queue, "new");
 	//commit(new_queue, ready_queue);
 	//print_state(ready_queue, "ready");
 	//print_state(new_queue, "new");	
 	cout << endl << "Please enter how many cycles you would like the simulator to run: ";
 	cin >> cycle_count;
+	
 	//Enter the scheduling type you will use
 	int scheduling_choice, end_choice;
 	int run =1;
@@ -107,7 +112,7 @@ int main()
 					{
 						commit(new_queue, ready_queue);
 					}
-					if(running.size() == 0) 
+					if(running.size() <= 0) 
 						{
 						if(ready_queue.size() > 0)
 						{	
@@ -137,11 +142,30 @@ int main()
 						}
 					else
 						{
-							if(running.at(0).get_operations_size() > 0)
+							cout << "At the running"<<endl;
+							if(running.at(0).get_total_cycles() > 0)
 								{
 									if(running.at(0).get_operation_name(0) == "CALCULATE")
 										{
-											running.at(0).decrement();
+											if(running.at(0).get_crit(0) == 1)
+												{
+													if (critflag == false)
+														{
+															critflag = true;
+															processflag = running.at(0).get_process_num();
+															running.at(0).decrement(critflag);
+														}
+												
+													else if (critflag == true && processflag == running.at(0).get_process_num())
+														{
+															running.at(0).decrement(critflag);
+														}	
+
+												}
+											else
+											{
+												running.at(0).decrement(critflag);
+											}	
 										}
 									else
 										{
@@ -168,22 +192,27 @@ int main()
 						{
 							for(int i = 0; i < wait_queue.size(); i++)
 								{
-								if(wait_queue.at(i).get_operations_size() == 0)
-										{
-											process_swap_states(wait_queue, ready_queue, i, "ready");
-												if (scheduling_choice == 1)
-													{
-														priority_schdule(ready_queue);	
-													}	
-												else if( scheduling_choice == 2);
-													{
-														shortest_first(ready_queue);	
-													}
-										}
-
 									if(wait_queue.at(i).get_operation_name(0) == "I/O")
 										{
-											wait_queue.at(i).decrement();
+											if(wait_queue.at(i).get_crit(0) == 1)
+												{
+													if (critflag == false)
+														{
+															critflag = true;
+															processflag = wait_queue.at(i).get_process_num();
+															wait_queue.at(i).decrement(critflag);
+														}
+												
+													else if (critflag == true && processflag == wait_queue.at(i).get_process_num())
+														{
+															wait_queue.at(i).decrement(critflag);
+														}	
+
+												}
+											else
+											{
+												wait_queue.at(i).decrement(critflag);
+											}
 										}
 									
 
@@ -202,10 +231,26 @@ int main()
 
 
 										}
+									if(wait_queue.at(i).get_total_cycles() == 0)
+										{
+											cout << "Here /n/n";
+											process_swap_states(wait_queue, ready_queue, i, "ready");
+												if (scheduling_choice == 1)
+													{
+														priority_schdule(ready_queue);	
+													}	
+												else if( scheduling_choice == 2);
+													{
+														shortest_first(ready_queue);	
+													}
+										}
+
+
 								}
 						}
 
 				cout << "cycle: " << cycle_count << endl;
+				cout << "criticalflag: " << critflag << "  critcal process:" << processflag << endl;
 				print_state(new_queue, "new");
 				print_state(ready_queue, "ready");
 				print_state(running, "running");

@@ -23,11 +23,11 @@ void process ::set_operations(string temp, int j)
 	string Op_name;
 	int mincycle, maxcycle, cycles, ttemp_cycles = 0;
 	string firstline;
-	srand (time(NULL)+j);
 	ifstream utemplate(temp, ios::in);
 	getline(utemplate, firstline);
 	while (utemplate >>Op_name >> mincycle >> maxcycle)
 	{
+		srand (time(NULL)+j);
 		cycles = rand() % (maxcycle - mincycle +1) + mincycle;
 		operation pro_op(Op_name, cycles);
 		this->process_operations.push_back(pro_op);
@@ -72,12 +72,20 @@ int process :: get_operation_cycles(int a)
 {
 	return this->process_operations.at(a).Op_cycles;
 }
-void process :: decrement()
+int process :: get_crit(int a)
+{
+	return this->process_operations.at(a).crit;
+}
+void process :: decrement(bool &a)
 {
 	this->process_operations.at(0).Op_cycles--;
 	this->total_cycles--;
 	if(this->get_operation_cycles(0) <= 0)
 		{
+			if(a == true && this->get_crit(0) == 1)
+				{
+					a = false;
+				}
 			this->process_operations.erase(process_operations.begin());
 		}
 }
