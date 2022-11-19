@@ -118,6 +118,18 @@ int main()
 					if(running.at(0).get_operations_size() == 0)
 					{
 						process_swap_states(running, terminated, 0, "terminated");
+						if (ready_queue.size() > 0)
+						{
+							if (scheduling_choice == 1)
+						{
+							priority_schedule(ready_queue);	
+						}
+						else if(scheduling_choice == 2)
+						{
+							shortest_first(ready_queue);
+						}
+
+						}
 					}
 					else
 					{
@@ -128,6 +140,19 @@ int main()
 						else
 						{
 							process_swap_states(running, wait_queue, 0, "waiting");
+							if (ready_queue.size() > 0)
+							{
+								if (scheduling_choice == 1)
+								{
+									priority_schedule(ready_queue);	
+								}	
+								else if(scheduling_choice == 2)
+								{
+									shortest_first(ready_queue);
+								}
+
+						}
+
 						}
 					}
 				}
@@ -147,6 +172,15 @@ int main()
 						if(running.at(0).get_operations_size() == 0)
 						{
 							process_swap_states(running, terminated, 0, "terminated");
+							if (scheduling_choice == 1)
+							{
+								priority_schedule(ready_queue);	
+							}	
+							else if(scheduling_choice == 2)
+							{
+								shortest_first(ready_queue);
+							}
+
 						}
 						else
 						{
@@ -156,7 +190,16 @@ int main()
 							}
 							else
 							{
-								process_swap_states(running, wait_queue, 0, "waiting");
+								process_swap_states(running, wait_queue, 0, "waiting");\
+								if (scheduling_choice == 1)
+								{
+									priority_schedule(ready_queue);	
+								}	
+								else if(scheduling_choice == 2)
+								{
+									shortest_first(ready_queue);
+								}
+
 							}
 						}
 					}
@@ -168,6 +211,15 @@ int main()
 						if(wait_queue.at(i).get_operations_size() == 0)
 						{
 							process_swap_states(wait_queue, ready_queue, i, "ready");
+							if (scheduling_choice == 1)
+							{
+								priority_schedule(ready_queue);	
+							}	
+							else if(scheduling_choice == 2)
+							{
+								shortest_first(ready_queue);
+							}
+
 						}
 						else
 						{
@@ -178,6 +230,15 @@ int main()
 							else
 							{
 								process_swap_states(wait_queue, ready_queue, i, "ready");
+								if (scheduling_choice == 1)
+								{
+									priority_schedule(ready_queue);	
+								}	
+								else if(scheduling_choice == 2)
+								{
+									shortest_first(ready_queue);
+								}
+
 							}
 						}
 					}
