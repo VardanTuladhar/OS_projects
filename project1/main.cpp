@@ -107,149 +107,84 @@ int main()
 		while (run == 1) 
 		{
 			while( cycle_count > 0)
+			{
+				cout << "ready: " <<ready_queue.size() << endl << "running: " << running.size() << endl << "wait_queue: " << wait_queue.size() << endl; 
+				if(new_queue.size() != 0)
 				{
-					cout << "ready: " <<ready_queue.size() << endl << "running: " << running.size() << endl << "wait_queue: " << wait_queue.size() << endl; 
-					if(new_queue.size() != 0)
+					commit(new_queue, ready_queue);
+				}
+				if(running.size() >  0) 
+				{
+					if(running.at(0).get_operations_size() == 0)
 					{
-						commit(new_queue, ready_queue);
+						process_swap_states(running, terminated, 0, "terminated");
 					}
-					if(running.size() <= 0) 
-						{
-						if(ready_queue.size() > 0)
-						{	
-							while (1)
-								{
-									if (scheduling_choice == 1)
-										{
-											priority_schdule(ready_queue);	
-											break;
-										}	
-									else if( scheduling_choice == 2)
-
-										{
-											shortest_first(ready_queue);	
-											break;
-										}
-									else
-										{
-											cout << "You did not pick an apropraite answer please pick again: ";
-		       									cin >> scheduling_choice;	
-										}	
-	
-								}
-							
-							process_swap_states(ready_queue, running, 0, "running");
-						}
-						}
 					else
+					{
+						if(running.at(0).get_operation_name(0) == "CALCULATE")
 						{
-							cout << "At the running"<<endl;
-							if(running.at(0).get_total_cycles() > 0)
-								{
-									if(running.at(0).get_operation_name(0) == "CALCULATE")
-										{
-											if(running.at(0).get_crit(0) == 1)
-												{
-													if (critflag == false)
-														{
-															critflag = true;
-															processflag = running.at(0).get_process_num();
-															running.at(0).decrement(critflag);
-														}
-												
-													else if (critflag == true && processflag == running.at(0).get_process_num())
-														{
-															running.at(0).decrement(critflag);
-														}	
-
-												}
-											else
-											{
-												running.at(0).decrement(critflag);
-											}	
-										}
-									else
-										{
-											process_swap_states(running, wait_queue, 0, "waiting");
-											if (scheduling_choice == 1)
-												{
-													priority_schdule(ready_queue);	
-												}	
-											else if( scheduling_choice == 2)
-
-												{
-													shortest_first(ready_queue);	
-												}
-
-										}	
-								}
+							decrementation(running, 0, processflag, critflag);	
+						}
+						else
+						{
+							process_swap_states(running, wait_queue, 0, "waiting");
+						}
+					}
+				}
+				else
+				{
+					if (ready_queue.size() > 0)
+					{
+						if (scheduling_choice == 1)
+						{
+							priority_schedule(ready_queue);	
+						}
+						else if(scheduling_choice == 2)
+						{
+							shortest_first(ready_queue);
+						}
+						process_swap_states(ready_queue, running, 0, "running");
+						if(running.at(0).get_operations_size() == 0)
+						{
+							process_swap_states(running, terminated, 0, "terminated");
+						}
+						else
+						{
+							if(running.at(0).get_operation_name(0) == "CALCULATE")
+							{
+								decrementation(running, 0, processflag, critflag);	
+							}
 							else
-								{
-									process_swap_states(running, terminated,0, "terminated" );
-								}
-
+							{
+								process_swap_states(running, wait_queue, 0, "waiting");
+							}
 						}
-					if(wait_queue.size() > 0)
+					}
+				}
+				if(wait_queue.size() > 0)
+				{
+					for(int i =0; i < wait_queue.size(); i++)
+					{
+						if(wait_queue.at(i).get_operations_size() == 0)
 						{
-							for(int i = 0; i < wait_queue.size(); i++)
-								{
-									if(wait_queue.at(i).get_operation_name(0) == "I/O")
-										{
-											if(wait_queue.at(i).get_crit(0) == 1)
-												{
-													if (critflag == false)
-														{
-															critflag = true;
-															processflag = wait_queue.at(i).get_process_num();
-															wait_queue.at(i).decrement(critflag);
-														}
-												
-													else if (critflag == true && processflag == wait_queue.at(i).get_process_num())
-														{
-															wait_queue.at(i).decrement(critflag);
-														}	
-
-												}
-											else
-											{
-												wait_queue.at(i).decrement(critflag);
-											}
-										}
-									
-
-									else
-										{
-											process_swap_states(wait_queue, ready_queue, i, "ready");
-											if (scheduling_choice == 1)
-												{
-													priority_schdule(ready_queue);	
-												}	
-											else if( scheduling_choice == 2)
-
-												{
-													shortest_first(ready_queue);	
-												}
-
-
-										}
-									if(wait_queue.at(i).get_total_cycles() == 0)
-										{
-											cout << "Here /n/n";
-											process_swap_states(wait_queue, ready_queue, i, "ready");
-												if (scheduling_choice == 1)
-													{
-														priority_schdule(ready_queue);	
-													}	
-												else if( scheduling_choice == 2);
-													{
-														shortest_first(ready_queue);	
-													}
-										}
-
-
-								}
+							process_swap_states(wait_queue, ready_queue, i, "ready");
 						}
+						else
+						{
+							if(wait_queue.at(i).get_operation_name(0) == "I/O")
+							{
+								decrementation(wait_queue, i, processflag, critflag);
+							}
+							else
+							{
+								process_swap_states(wait_queue, ready_queue, i, "ready");
+							}
+						}
+					}
+				}
 
+							
+							
 				cout << "cycle: " << cycle_count << endl;
 				cout << "criticalflag: " << critflag << "  critcal process:" << processflag << endl;
 				print_state(new_queue, "new");

@@ -25,7 +25,7 @@ void shortest_first( vector <process> &a)
 			
 	}	
 
-void priority_schdule( vector <process> &a)
+void priority_schedule( vector <process> &a)
 	{	
 
 			for (int i = 0; i < a.size(); i++)
@@ -89,4 +89,30 @@ void process_swap_states(vector <process> &a, vector <process> &b, int the_proce
 	b.at(b.size() -1).set_state(state);
 }
 
+void decrementation(vector <process> &a, int i, int &process_num, bool &crit)
+{
+	if(a.at(i).get_crit(0) == 1)
+	{
+		if (crit == true)
+		{
+		 	if (process_num == a.at(i).get_process_num())
+			{
+				a.at(i).decrement(crit);
+			}		
+		}
+		else
+		{
+			crit = true;
+			process_num = a.at(i).get_process_num();
+			a.at(i).decrement(crit);
+		}
+	}
+	else
+	{
+		a.at(i).decrement(crit);
+	}	
+		
 
+	
+	
+}

@@ -11,7 +11,7 @@ class process{
 		int priority;
 		int child_processes;
 		string state;	
-		PCB *ThePCB;
+	//	PCB *ThePCB;
 		vector <operation> process_operations;
 	public:
 		//set the process up

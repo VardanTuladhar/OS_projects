@@ -16,7 +16,7 @@ process :: process()
 void process :: set_process_num(int a)
 {
 	this->process_num = a;
-      	this->ThePCB->set_process_num(a);	
+//      	this->ThePCB->set_process_num(a);	
 }
 void process ::set_operations(string temp, int j)
 {
@@ -38,7 +38,7 @@ void process ::set_operations(string temp, int j)
 void process :: setpriority(int a)
 {
 	this->priority = a;
-	this->ThePCB->set_priority_num(a);
+	//this->ThePCB->set_priority_num(a);
 }
 void process :: set_state(string updated_state)
 {
