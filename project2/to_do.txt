@@ -1,0 +1,30 @@
+Alright the do list for this project: 
+-when newqueue is commited change states to ready and delete the processes from the vector 
+-operating system simulator
+	 if runningqueue = 0:  
+		-schedule the ready queue based on the user selesction
+		-send the first value into the ready queue and update PCB
+	else:
+		if operation size is >  0:
+			if current op is calc:
+				-decerement that operation cycle value
+				if runing cycles = 0:
+					-remove from the operations vector
+	
+			else:
+				-move to the waiting state
+		else:
+			-go to the termination state
+	if waitingqueue > 0:
+		-itterate through all of the waitingqueue
+		if their op is I/O:
+			-decrement that operation cycle value
+			if cycle value is 0:
+				-remove from the operation queue
+		else: 
+			-move to the ready queue and update pcb
+	-decrement loop
+	
+	
+	  
+	
