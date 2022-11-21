@@ -105,6 +105,7 @@ int main()
 	int run =1;
 	int start_cycle = cycle_count;
 	bool inmem;
+	int victim = 0;
 	//int main_mem, vitual_mem = 512;
 	vector <frame> mainmemory(128), virtualmemory(128);
 
@@ -125,9 +126,9 @@ int main()
 					//this is when we initally create the processes at the beginning of the simulation	
 					if(cycle_count == start_cycle)
 					{
-					for(int i = 0; i < 5; i++)
+					for(int op = 0; op < 5; op++)
 					{
-						for(int j = 0; j < process_count; j++)
+						for(int p = 0; p < process_count; p++)
 						{	
 							if(frame > 127)
 							{
@@ -135,46 +136,83 @@ int main()
 								{
 									break;
 								}
-								if(i == 0)
+								if(op == 0)
 								{		
-									virtualmemory.at(vframe).set_frame(new_queue.at(0).get_process_num(), i);
-									new_queue.at(0).set_page_table(i, vframe, 0, "Vmem");
+									virtualmemory.at(vframe).set_frame(new_queue.at(0).get_process_num(), op);
+									new_queue.at(0).set_page_table(op, vframe, 0, "Vmem");
 									process_swap_states(new_queue, ready_queue, 0,"ready");
 								        vframe++;	
 								}
 								else
 								{
 
-								virtualmemory.at(vframe).set_frame(ready_queue.at(j).get_process_num(), i);
-								ready_queue.at(j).set_page_table(i, vframe, 0, "Vmem");
+								virtualmemory.at(vframe).set_frame(ready_queue.at(p).get_process_num(), op);
+								ready_queue.at(p).set_page_table(op, vframe, 0, "Vmem");
 								vframe++;
 								}
 							}
 							else
 							{
 							//cout << j <<endl;
-								if(i == 0)
+								if(op == 0)
 								{		
-									mainmemory.at(frame).set_frame(new_queue.at(0).get_process_num(), i);
-									new_queue.at(0).set_page_table(i, frame, 1, "Mem");
+									mainmemory.at(frame).set_frame(new_queue.at(0).get_process_num(), op);
+									new_queue.at(0).set_page_table(op, frame, 1, "Mem");
 									process_swap_states(new_queue, ready_queue, 0,"ready");
 								        frame++;	
 								}
 								else
 								{
-									mainmemory.at(frame).set_frame(ready_queue.at(j).get_process_num(), i);
-									ready_queue.at(j).set_page_table(i, frame, 1, "Mem");
+									mainmemory.at(frame).set_frame(ready_queue.at(p).get_process_num(), op);
+									ready_queue.at(p).set_page_table(op, frame, 1, "Mem");
 								        frame++;	
 								}
 							}
 						}
 							
 						if(vframe >127)
+		
 							break;
 					}
 					}
 					else
 					{
+						/*int open_frame = -1;
+						for(int o = 0; o < 128; o++)
+						{
+							if(virtualmemory.at(o).get_process_num() == -1)
+							{
+								 open_frame = o;
+								 break;
+							}
+						}
+						if (open_frame != -1)
+						{
+							if(op == 0)
+								{		
+									virtualmemory.at(o).set_frame(new_queue.at(0).get_process_num(), op);
+									new_queue.at(0).set_page_table(op, vframe, 0, "Vmem");
+									process_swap_states(new_queue, ready_queue, 0,"ready");
+									p++;
+								        	
+								}
+								else
+								{
+
+								virtualmemory.at(o).set_frame(ready_queue.at(p).get_process_num(), op);
+								ready_queue.at(p).set_page_table(op, vframe, 0, "Vmem");
+								p++;
+								}
+							if(p == 5)
+							{
+								p= 0;
+								op++;
+							}
+
+
+						}*/
+
+
 						
 					}
 				}
@@ -277,7 +315,7 @@ int main()
 						else
 							{
 								//search the main memory for the a free frame
-								int open_frame;
+								int open_frame = -1;
 								for(int o = 0; o < 128; o++)
 								{
 									if(mainmemory.at(o).get_process_num() == -1)
@@ -286,14 +324,28 @@ int main()
 										break;
 									}
 								}
+								if(open_frame != -1)
+								{
 								//update the operations page table
 								//get the operation page value:q
 
-								int cpage = running.at(0).get_pageid(0);
-								int cframe = running.at(0).get_page_frame(cpage);
+									int cpage = running.at(0).get_pageid(0);
+									int cframe = running.at(0).get_page_frame(cpage);
 								//set the page table
-								running.at(0).set_page_table(cpage, open_frame, 1, "Mainmem");
-								swap(virtualmemory[cframe], mainmemory[open_frame]);
+									running.at(0).set_page_table(cpage, open_frame, 1, "Mainmem");
+									swap(virtualmemory[cframe], mainmemory[open_frame]);
+								}
+								else
+								{
+									//victim selection
+									int cpage = running.at(0).get_pageid(0);
+									int cframe = running.at(0).get_page_frame(cpage);
+								//set the page table
+									running.at(0).set_page_table(cpage, victim, 1, "Mainmem");
+									swap(virtualmemory[cframe], mainmemory[victim]);
+									victim++;
+
+								}
 
 
 
@@ -321,23 +373,29 @@ int main()
 						}
 						else
 						{
-							if(wait_queue.at(i).get_operation_name(0) == "I/O")
-							{
-								decrementation(wait_queue, i, processflag, critflag, mainmemory);
-							}
-							else 
-							{
-								process_swap_states(wait_queue, ready_queue, i, "ready");
-								if (scheduling_choice == 1)
+							
+								if(wait_queue.at(i).get_operation_name(0) == "I/O")
 								{
-									priority_schedule(ready_queue);	
-								}	
-								else if(scheduling_choice == 2)
-								{
-									shortest_first(ready_queue);
+									decrementation(wait_queue, i, processflag, critflag, mainmemory);
 								}
+								else 
+								{
+									process_swap_states(wait_queue, ready_queue, i, "ready");
+									if (scheduling_choice == 1)
+									{
+										priority_schedule(ready_queue);	
+									}	
+									else if(scheduling_choice == 2)
+									{
+										shortest_first(ready_queue);
+									}	
 
-							}
+								}
+							
+							
+							
+
+
 						}
 					}
 				}
