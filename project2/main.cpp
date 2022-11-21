@@ -2,6 +2,7 @@
 #include "process.h"
 #include "PCB.h"
 #include "OS_functions.h"
+#include "frame.h"
 #include <fstream>
 #include <vector>
 #include <stdlib.h>
@@ -102,8 +103,11 @@ int main()
 	//Enter the scheduling type you will use
 	int scheduling_choice, end_choice;
 	int run =1;
+	int start_cycle = cycle_count;
+	bool inmem;
 	//int main_mem, vitual_mem = 512;
-	int mainmemory[127][1], virtualmemory[127][1];
+	vector <frame> mainmemory(128), virtualmemory(128);
+
 	cout << "What scheduling type will you use: " << endl <<"1. Priority" << endl <<"2. Shortest job first" << endl;
 	cin >> scheduling_choice;
 	//enter scheduling choice 
@@ -114,9 +118,67 @@ int main()
 				//cout << "ready: " <<ready_queue.size() << endl << "running: " << running.size() << endl << "wait_queue: " << wait_queue.size() << endl; 
 				if(new_queue.size() != 0)
 				{
-				
-					commit(new_queue, ready_queue, mainmemory, virtualmemory);
+					//take a the first page of the first process and put into mem page and put it into memory
+					//put processs num in
+					int frame = 0;	
+					int vframe = 0;
+					//this is when we initally create the processes at the beginning of the simulation	
+					if(cycle_count == start_cycle)
+					{
+					for(int i = 0; i < 5; i++)
+					{
+						for(int j = 0; j < process_count; j++)
+						{	
+							if(frame > 127)
+							{
+								if (vframe > 127)
+								{
+									break;
+								}
+								if(i == 0)
+								{		
+									virtualmemory.at(vframe).set_frame(new_queue.at(0).get_process_num(), i);
+									new_queue.at(0).set_page_table(i, vframe, 0, "Vmem");
+									process_swap_states(new_queue, ready_queue, 0,"ready");
+								        vframe++;	
+								}
+								else
+								{
+
+								virtualmemory.at(vframe).set_frame(ready_queue.at(j).get_process_num(), i);
+								ready_queue.at(j).set_page_table(i, vframe, 0, "Vmem");
+								vframe++;
+								}
+							}
+							else
+							{
+							//cout << j <<endl;
+								if(i == 0)
+								{		
+									mainmemory.at(frame).set_frame(new_queue.at(0).get_process_num(), i);
+									new_queue.at(0).set_page_table(i, frame, 1, "Mem");
+									process_swap_states(new_queue, ready_queue, 0,"ready");
+								        frame++;	
+								}
+								else
+								{
+									mainmemory.at(frame).set_frame(ready_queue.at(j).get_process_num(), i);
+									ready_queue.at(j).set_page_table(i, frame, 1, "Mem");
+								        frame++;	
+								}
+							}
+						}
+							
+						if(vframe >127)
+							break;
+					}
+					}
+					else
+					{
+						
+					}
 				}
+						
 				if(running.size() >  0) 
 				{
 					if(running.at(0).get_operations_size() == 0)
@@ -139,7 +201,7 @@ int main()
 					{
 						if(running.at(0).get_operation_name(0) == "CALCULATE")
 						{
-							decrementation(running, 0, processflag, critflag);	
+							decrementation(running, 0, processflag, critflag, mainmemory);	
 						}
 						else
 						{
@@ -172,6 +234,8 @@ int main()
 						{
 							shortest_first(ready_queue);
 						}
+						//check that the operation is in memory
+						
 						process_swap_states(ready_queue, running, 0, "running");
 						if(running.at(0).get_operations_size() == 0)
 						{
@@ -188,23 +252,53 @@ int main()
 						}
 						else
 						{
-							if(running.at(0).get_operation_name(0) == "CALCULATE")
+
+						if(running.at(0).get_current_op_validbit() == 1)
+						
 							{
-								decrementation(running, 0, processflag, critflag);	
-							}
-							else
-							{
-								process_swap_states(running, wait_queue, 0, "waiting");\
-								if (scheduling_choice == 1)
+								if(running.at(0).get_operation_name(0) == "CALCULATE")
 								{
-									priority_schedule(ready_queue);	
-								}	
-								else if(scheduling_choice == 2)
-								{
-									shortest_first(ready_queue);
+									decrementation(running, 0, processflag, critflag, mainmemory);	
 								}
+								else
+								{
+									process_swap_states(running, wait_queue, 0, "waiting");\
+									if (scheduling_choice == 1)
+									{
+										priority_schedule(ready_queue);	
+									}	
+									else if(scheduling_choice == 2)
+									{
+										shortest_first(ready_queue);
+									}
+
+								}
+							}
+						else
+							{
+								//search the main memory for the a free frame
+								int open_frame;
+								for(int o = 0; o < 128; o++)
+								{
+									if(mainmemory.at(o).get_process_num() == -1)
+									{
+										 open_frame = o;
+										break;
+									}
+								}
+								//update the operations page table
+								//get the operation page value:q
+
+								int cpage = running.at(0).get_pageid(0);
+								int cframe = running.at(0).get_page_frame(cpage);
+								//set the page table
+								running.at(0).set_page_table(cpage, open_frame, 1, "Mainmem");
+								swap(virtualmemory[cframe], mainmemory[open_frame]);
+
+
 
 							}
+
 						}
 					}
 				}
@@ -229,9 +323,9 @@ int main()
 						{
 							if(wait_queue.at(i).get_operation_name(0) == "I/O")
 							{
-								decrementation(wait_queue, i, processflag, critflag);
+								decrementation(wait_queue, i, processflag, critflag, mainmemory);
 							}
-							else
+							else 
 							{
 								process_swap_states(wait_queue, ready_queue, i, "ready");
 								if (scheduling_choice == 1)
@@ -250,16 +344,9 @@ int main()
 
 							
 							
-				cout << "cycle: " << cycle_count << endl;
-				cout << "criticalflag: " << critflag << "  critcal process:" << processflag << endl;
-				print_state(new_queue, "new");
-				print_state(ready_queue, "ready");
-				print_state(running, "running");
-				print_state(wait_queue, "waiting");
-				print_state(terminated, "terminated");
 				cycle_count--;
 				}
-			cout<< "End of simulation options:" <<endl << "1. exit"<<endl << "2. another run"<< endl;
+			cout<< "End of simulation options:" <<endl << "1. exit"<<endl << "2. another run"<< endl<< "3. see the state machine" << endl << "4. see the memory"<<endl << "5. see the new state" <<endl;
 			cin >> end_choice;
 			switch(end_choice){
 				case 1:
@@ -269,6 +356,42 @@ int main()
 					cout << "enter number of cycles: ";
 					cin >>cycle_count;
 					break;
+				case 3:
+					cout << "cycle: " << cycle_count << endl;
+					cout << "criticalflag: " << critflag << "  critcal process:" << processflag << endl;
+					print_state(new_queue, "new");
+					print_state(ready_queue, "ready");
+					print_state(running, "running");
+					print_state(wait_queue, "waiting");
+					print_state(terminated, "terminated");
+					break;
+				case 4:
+					cout << "Main Memory: \n";
+					cout << "Frame:\tProcess: Page:\n";
+					cout << "------\t------ -------\n";
+					for(int i = 0; i < 128; i++)
+					{
+						cout << i <<"\t";
+						cout<<mainmemory[i].get_process_num()<<"\t";
+						cout<<mainmemory[i].get_page_num()<<endl;
+					}
+					cout << "Virtual Memory: \n";
+					cout << "Frame:\tProcess: Page:\n";
+					cout << "------\t------ -------\n";
+					for(int i = 0; i < 128; i++)
+					{
+						cout << i <<"\t";
+						cout<<virtualmemory[i].get_process_num()<<"\t";
+						cout<<virtualmemory[i].get_page_num()<<endl;
+					}
+
+					break;
+				case 5:
+					print_state(new_queue, "new");
+					break;
+
+
+
 				default:
 					run = 0;
 					break;

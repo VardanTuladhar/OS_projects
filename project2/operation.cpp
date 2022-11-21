@@ -5,7 +5,7 @@
 #include <string>
 using namespace std;
 
-operation :: operation(string a, int b)
+operation :: operation(string a, int b, int c)
 {
 	Op = a;
 	Op_cycles = b;	
@@ -20,7 +20,7 @@ operation :: operation(string a, int b)
 			crit = 1;
 		}
 	size = 4;
-	
+	pageid = c;
 
 
 }

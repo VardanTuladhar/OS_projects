@@ -21,7 +21,7 @@ void process :: set_process_num(int a)
 void process ::set_operations(string temp, int j)
 {
 	string Op_name;
-	int mincycle, maxcycle, cycles,i, ttemp_cycles = 0;
+	int mincycle, maxcycle, cycles,i = 0;
 	string firstline;
 	ifstream utemplate(temp, ios::in);
 	getline(utemplate, firstline);
@@ -29,8 +29,8 @@ void process ::set_operations(string temp, int j)
 	{
 		srand (time(NULL)+j);
 		cycles = rand() % (maxcycle - mincycle +1) + mincycle;
-		operation pro_op(Op_name, cycles);
-		pro_op.pageid = i;
+	//	cout << i;
+		operation pro_op(Op_name, cycles,i);
 		this->process_operations.push_back(pro_op);
 		this->total_cycles += cycles;
 		this->total_size += pro_op.size;
@@ -89,7 +89,17 @@ int process :: get_crit(int a)
 {
 	return this->process_operations.at(a).crit;
 }
-void process :: decrement(bool &a)
+int process :: get_current_op_validbit()
+{
+	int op_ref = this->process_operations.at(0).pageid;
+	return this->get_valid(op_ref);
+}
+	
+int process :: get_pageid(int a)
+{
+	return this->process_operations.at(a).pageid;
+}
+void process :: decrement(bool &a, vector <frame> &mm)
 {
 	this->process_operations.at(0).Op_cycles--;
 	this->total_cycles--;
@@ -99,6 +109,12 @@ void process :: decrement(bool &a)
 				{
 					a = false;
 				}
+			//free the memory that the operation took up
+			//use the process table to find the frame that thee current operation is in
+			//set that frame value to -1
+			int op_ref = this->process_operations.at(0).pageid;
+			int freeframe = this->get_page_frame(op_ref);
+			mm.at(freeframe).set_frame(-1, -1);
 			this->process_operations.erase(process_operations.begin());
 		}
 }

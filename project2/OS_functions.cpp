@@ -2,6 +2,7 @@
 #include "process.h"
 #include "PCB.h"
 #include "OS_functions.h"
+#include "frame.h"
 #include <vector>
 using namespace std;
 
@@ -87,16 +88,17 @@ void commit(vector <process> &a, vector <process> &b, int (&main_mem)[127][1], i
 				a.at(0).set_page_table(k, frame,1, "main memory");
 				main_mem[frame][0] = a.at(0).get_process_num();
 				main_mem[frame][1] = k;
+				cout << frame << "\t" << main_mem[frame][0] << "\t" << main_mem[frame][1]<<endl;
 				process_swap_states(a, b, 0, "ready");
 			}
-			else
+		/*	else
 			{
 				main_mem[frame][0] = b.at(j).get_process_num();
 				main_mem[frame][1] = k;
 				b.at(j).set_page_table(k, frame, 1, "main memory");
 
 
-			}
+			}i*/
 			frame++;
 			if(frame > 128)
 				break;		
@@ -125,7 +127,7 @@ void process_swap_states(vector <process> &a, vector <process> &b, int the_proce
 	b.at(b.size() -1).set_state(state);
 }
 
-void decrementation(vector <process> &a, int i, int &process_num, bool &crit)
+void decrementation(vector <process> &a, int i, int &process_num, bool &crit, vector <frame> &mem)
 {
 	if(a.at(i).get_crit(0) == 1)
 	{
@@ -133,18 +135,18 @@ void decrementation(vector <process> &a, int i, int &process_num, bool &crit)
 		{
 		 	if (process_num == a.at(i).get_process_num())
 			{
-				a.at(i).decrement(crit);
+				a.at(i).decrement(crit, mem);
 			}		
 		}
 		else
 		{
 			crit = true;
 			process_num = a.at(i).get_process_num();
-			a.at(i).decrement(crit);
+			a.at(i).decrement(crit, mem);
 		}
 	}
 	else
 	{
-		a.at(i).decrement(crit);
+		a.at(i).decrement(crit, mem);
 	}	
 }

@@ -10,7 +10,7 @@ class operation{
 		int Op_cycles;
 		int crit;
 		int size, pageid;
-		operation(string a, int b);
+		operation(string a, int b, int c);
 
 };
 #endif

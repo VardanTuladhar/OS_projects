@@ -4,6 +4,7 @@
 #include <vector>
 #include "operation.h"
 #include "PCB.h"
+#include "frame.h"
 using namespace std;
 class process{
 	private:
@@ -44,8 +45,10 @@ class process{
 		//get the current operations cycles
 		int get_operation_cycles(int a);
 		int get_crit(int a);
+		int get_current_op_validbit();
+		int get_pageid(int a);
 		//decrement the processes current cylce
-		void decrement(bool &a);
+		void decrement(bool &a, vector <frame> &mm);
 		//set the page table
 		void set_page_table(int page, int frame, int valid, string mem);
 		//get the page
