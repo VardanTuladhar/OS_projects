@@ -177,7 +177,8 @@ int main()
 					}
 					else
 					{
-						/*int open_frame = -1;
+						/*cout << "Hello" << endl;
+						int open_frame = -1;
 						for(int o = 0; o < 128; o++)
 						{
 							if(virtualmemory.at(o).get_process_num() == -1)
@@ -187,32 +188,12 @@ int main()
 							}
 						}
 						if (open_frame != -1)
-						{
-							if(op == 0)
-								{		
-									virtualmemory.at(o).set_frame(new_queue.at(0).get_process_num(), op);
-									new_queue.at(0).set_page_table(op, vframe, 0, "Vmem");
-									process_swap_states(new_queue, ready_queue, 0,"ready");
-									p++;
-								        	
-								}
-								else
-								{
-
-								virtualmemory.at(o).set_frame(ready_queue.at(p).get_process_num(), op);
-								ready_queue.at(p).set_page_table(op, vframe, 0, "Vmem");
-								p++;
-								}
-							if(p == 5)
-							{
-								p= 0;
-								op++;
-							}
-
-
+						{	
+							virtualmemory.at(open_frame).set_frame(new_queue.at(0).get_process_num(), 0);
+							new_queue.at(0).set_page_table(0, vframe, 0, "Vmem");
+							process_swap_states(new_queue, ready_queue, 0,"ready");								        	
 						}*/
-
-
+								
 						
 					}
 				}
