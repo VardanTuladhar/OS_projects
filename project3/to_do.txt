@@ -1,0 +1,9 @@
+0. get caffiene
+20 minutes on 5 minutes off clean room 
+starting 3:20
+1. fix the memory management
+	a. putting operations in the memory
+	b. getting new values to the ready queue after 255(do later)
+2. study 2-4 chapters of the OS for monday 
+3. put the simulator into a class to represent multicore 
+4. multi thread a process in the simulator

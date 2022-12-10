@@ -271,8 +271,8 @@ int main()
 						}
 						else
 						{
-
-						if(running.at(0).get_current_op_validbit() == 1)
+						int valid = running.at(0).get_current_op_validbit(); 
+						if(valid  == 1)
 						
 							{
 								if(running.at(0).get_operation_name(0) == "CALCULATE")
@@ -290,6 +290,7 @@ int main()
 									{
 										shortest_first(ready_queue);
 									}
+									process_swap_states(ready_queue, running, 0, "running");
 
 								}
 							}
