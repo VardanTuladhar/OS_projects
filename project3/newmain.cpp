@@ -83,21 +83,25 @@ int main()
 	priority2.clear();
 	cout << endl << "Please enter how many cycles you would like the simulator to run: ";
   cin >> cycle_count;
-	int scheduling_choice = 0;
+	int scheduling_choice1 = 0;
+	int scheduling_choice2 = 0;
+	cout << "Core1: " << endl << "What scheduling type will you use: " << endl <<"1. Priority" << endl <<"2. Shortest job first" << endl;
+	cin >> scheduling_choice1;
+	cout << "Core2: " << endl << "What scheduling type will you use: " << endl <<"1. Priority" << endl <<"2. Shortest job first" << endl;
+	cin >> scheduling_choice2;
 	bool run = true;
 	frame mainmemory[128], virtualmemory[128];
 	frame *main1frame = &mainmemory[0];
 	frame *main2frame = &mainmemory[65];
 	frame *virtual1frame = &virtualmemory[0];
 	frame *virtual2frame = &virtualmemory[65];
-	cout << "What scheduling type will you use: " << endl <<"1. Priority" << endl <<"2. Shortest job first" << endl;
-	cin >> scheduling_choice;
+
 
 	core core1(new_queue1);
 	core core2(new_queue2);
 	int end_choice;
-	thread t1(&core:: run_core, core1, main1frame, virtual1frame, cycle_count, "Core 1:", scheduling_choice);
-	thread t2(&core :: run_core, core2, main2frame, virtual2frame, cycle_count, "Core 2:", scheduling_choice);
+	thread t1(&core:: run_core, core1, main1frame, virtual1frame, cycle_count, "Core 1:", scheduling_choice1);
+	thread t2(&core :: run_core, core2, main2frame, virtual2frame, cycle_count, "Core 2:", scheduling_choice2);
 	t1.join();
 	t2.join();
 

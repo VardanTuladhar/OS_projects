@@ -20,7 +20,7 @@ class core{
 
 	public:
 		core(vector <process> &new_process);
-		void run_core(frame *main, frame *virt,int cc, string core , int schedule);  
+		void run_core(frame *main, frame *virt,int cc, string core , int scheduling_choice);  
 		vector <process> get_new_state();
 		vector <process> get_ready_state();
 		vector <process> get_running_state();

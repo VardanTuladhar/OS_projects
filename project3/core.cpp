@@ -7,18 +7,17 @@ core :: core(vector <process> &new_process)
 {
 	new_queue = new_process;
 }
-void core :: run_core( frame *main, frame *virt, int cc, string core, int schedule)
+void core :: run_core( frame *main, frame *virt, int cc, string core, int scheduling_choice)
 {
 	bool run = true;
+	bool critflag = false;
 	int frame_count = 0;
 	frame *mainstart = main;
 	frame *virtstart = virt;
 	int numprocess = new_queue.size();
 	int start, tempcount, end_choice ;
-	int scheduling_choice;
 	start = cc;
 	tempcount = cc;
-
 	while (run == true)
 	{
 	while( tempcount > 0)
@@ -32,13 +31,14 @@ void core :: run_core( frame *main, frame *virt, int cc, string core, int schedu
 				{
 					if(main->get_page_num() == -1)//check it a frame is open
 					{
+						if(this->new_queue.size() > 0)
+						{
 						//insert first operation into free frame
 						main->set_frame(this->new_queue.at(0).get_process_num(), 0);
 						//set the page table to that frame
 						this->new_queue.at(0).set_page_table(0, frame_count, 1, "Mem");
 						//add the process to the ready queue
-						if(this->new_queue.size() > 1)
-						{
+
 							this->swap_states(this->new_queue, this->ready_queue, 0, "Ready");
 
 						}
@@ -51,31 +51,11 @@ void core :: run_core( frame *main, frame *virt, int cc, string core, int schedu
 					main = mainstart+frame_count;
 
 				}
-				/*while(frame_count < 129 && frame_count >= 65)
-                                {
-                                         if(virt->get_page_num() == -1)//check it a frame is open
-                                         {
-                                                 //insert first operation into free frame
-                                                 virt->set_frame(this->new_queue.at(0).get_process_num(), 0);
-                                                 //set the page table to that frame
-                                                 this->new_queue.at(0).set_page_table(0, frame_count, 0, "VirMem");
-                                                 //add the process to the ready queue
-                                                 if(this->new_queue.size() > 1)
-                                                 {
-                                                         process_swap_states(this->new_queue, this->ready_queue, 0, "Ready");
-                                                 }
-                                                 else
-                                                 {
-                                                         break;
-                                                 }
-                                         }
-                                         frame_count++;
-                                         virt = virtstart+frame_count;
 
-                                 }*/
 			}
 		}
-		/*if(this->running.size() >  0)
+		//if
+		if(this->running.size() >  0)
                                 {
                                         if(this->running.at(0).get_operations_size() == 0)
                                         {
@@ -93,34 +73,166 @@ void core :: run_core( frame *main, frame *virt, int cc, string core, int schedu
 
                                                 }
                                         }
-                                        else
-                                        {
-                                                if(running.at(0).get_operation_name(0) == "CALCULATE")
-                                                {
-                                                        decrementation(running, 0, processflag, critflag, mainmemory);
-                                                }
-                                                else
-                                                {
-                                                        process_swap_states(running, wait_queue, 0, "waiting");
-                                                        if (ready_queue.size() > 0)
-                                                        {
-                                                                if (scheduling_choice == 1)
-                                                                {
-                                                                        priority_schedule(ready_queue);
-                                                                }
-                                                                else if(scheduling_choice == 2)
-                                                                {
-                                                                        shortest_first(ready_queue);
-                                                                }
+																				else
+																				{
+																					if(this->running.at(0).get_operation_name(0) == "CALCULATE")
+																					{
+																						//decrementation(running, 0, processflag, critflag, mainmemory);
+																					}
+																					else
+																					{
+																						process_swap_states(this->running, this->wait_queue, 0, "waiting");
+																						if (this->ready_queue.size() > 0)
+																						{
+																							if (scheduling_choice == 1)
+																							{
+																								priority_schedule(this->ready_queue);
+																							}
+																							else if(scheduling_choice == 2)
+																							{
+																								shortest_first(this->ready_queue);
+																							}
+																						}
 
-                                                }
+																					}
+																				}
 
-                                                }
-                                        }
-                                }*/
+																}
+					else
+																{
+																	if (this->ready_queue.size() > 0)
+																	{
+																		if (scheduling_choice == 1)
+																		{
+																			priority_schedule(this->ready_queue);
+																		}
+																		else if(scheduling_choice == 2)
+																		{
+																			shortest_first(this->ready_queue);
+																		}
+																	}
+																	process_swap_states(this->ready_queue, this->running, 0, "running");
+																	if(this->running.at(0).get_operations_size() == 0)
+																	{
+																		process_swap_states(this->running, this->terminated, 0, "terminated");
+																		if (scheduling_choice == 1)
+																		{
+																			priority_schedule(this->ready_queue);
+																		}
+																		else if(scheduling_choice == 2)
+																		{
+																			shortest_first(this->ready_queue);
+																		}
+
+																	}
+																	else
+																	{
+																	int valid = this->running.at(0).get_current_op_validbit();
+																	if(valid  == 1)
+
+																		{
+																			if(this->running.at(0).get_operation_name(0) == "CALCULATE")
+																			{
+
+																			}
+																			else
+																			{
+																				process_swap_states(this->running, this->wait_queue, 0, "waiting");\
+																				if (scheduling_choice == 1)
+																				{
+																					priority_schedule(this->ready_queue);
+																				}
+																				else if(scheduling_choice == 2)
+																				{
+																					shortest_first(this->ready_queue);
+																				}
+																				process_swap_states(this->ready_queue, this->running, 0, "running");
+
+																			}
+																		}
+																		else
+																			{/*
+																				//search the main memory for the a free frame
+																				int open_frame = -1;
+																				for(int o = 0; o < 128; o++)
+																				{
+																					if(mainmemory.at(o).get_process_num() == -1)
+																					{
+																						 open_frame = o;
+																						break;
+																					}
+																				}
+																				if(open_frame != -1)
+																				{
+																				//update the operations page table
+																				//get the operation page value:q
+
+																					int cpage = running.at(0).get_pageid(0);
+																					int cframe = running.at(0).get_page_frame(cpage);
+																				//set the page table
+																					running.at(0).set_page_table(cpage, open_frame, 1, "Mainmem");
+																					swap(virtualmemory[cframe], mainmemory[open_frame]);
+																				}
+																				else
+																				{
+																					//victim selection
+																					int cpage = running.at(0).get_pageid(0);
+																					int cframe = running.at(0).get_page_frame(cpage);
+																				//set the page table
+																					running.at(0).set_page_table(cpage, victim, 1, "Mainmem");
+																					swap(virtualmemory[cframe], mainmemory[victim]);
+																					victim++;
+
+																				}*/
+																			}
+																	}
+																}
+
+																if(this->wait_queue.size() > 0)
+																{
+																	for(int i =0; i < this->wait_queue.size(); i++)
+																	{
+																		if(this->wait_queue.at(i).get_operations_size() == 0)
+																		{
+																			process_swap_states(this->wait_queue, this->ready_queue, i, "ready");
+																			if (scheduling_choice == 1)
+																			{
+																				priority_schedule(this->ready_queue);
+																			}
+																			else if(scheduling_choice == 2)
+																			{
+																				shortest_first(this->ready_queue);
+																			}
+
+																		}
+																		else
+																		{
+
+																				if(this->wait_queue.at(i).get_operation_name(0) == "I/O")
+																				{
+																					//decrementation(this->wait_queue, i, processflag, critflag, mainmemory);
+																				}
+																				else
+																				{
+																					process_swap_states(this->wait_queue, this->ready_queue, i, "ready");
+																					if (scheduling_choice == 1)
+																					{
+																						priority_schedule(this->ready_queue);
+																					}
+																					else if(scheduling_choice == 2)
+																					{
+																						shortest_first(this->ready_queue);
+																					}
+
+																				}
+																		}
+																	}
+																}
+
 
 tempcount--;
 }
+
 
 
 cout << core << endl;
@@ -137,12 +249,13 @@ switch(end_choice)
 		cin >>cc;
 		break;
 	case 3:
+				cout << core << endl;
+				print_state(this->get_new_state(), "new");
 				print_state(this->get_ready_state(), "ready");
-				//cout << endl << "Process: "<< *ptrcore1->get_process_num() << endl;
-				// print_state(ptr1->get_running_state(), "running");
-				//print_state(core1.get_waiting_state(), "waiting");
-				//print_state(core1.get_terminated_state(), "terminated");
-														break;
+				print_state(this->get_running_state(), "running");
+				print_state(this->get_waiting_state(), "waiting");
+				print_state(this->get_terminated_state(), "terminated");
+				break;
 
 	case 4:
 		main = mainstart;

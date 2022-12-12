@@ -15,19 +15,19 @@ void shortest_first( vector <process> &a)
 						{
 							if(a.at(j).get_total_cycles() > a.at(j+1).get_total_cycles())
 							{
-								swap(a.at(j), a.at(j+1)); 
+								swap(a.at(j), a.at(j+1));
 
 							}
-							
+
 						}
 
-				}	
-			
-			
-	}	
+				}
+
+
+	}
 
 void priority_schedule( vector <process> &a)
-	{	
+	{
 
 			for (int i = 0; i < a.size(); i++)
 				{
@@ -35,10 +35,10 @@ void priority_schedule( vector <process> &a)
 						{
 							if(a.at(j).get_priority() > a.at(j+1).get_priority())
 							{
-								swap(a.at(j), a.at(j+1)); 
+								swap(a.at(j), a.at(j+1));
 
 							}
-							
+
 						}
 				}
 
@@ -57,13 +57,13 @@ void print_process(process a)
 				cout << "process operations " << g << " cycle is " << a.get_operation_cycles(g) << endl;
 				cout << "crit: " << a.get_crit(g) <<endl;
 				cout << "page: " << g <<"\tassigned frame: " << a.get_page_frame(g) << "\tvalid bit: " << a.get_valid(g) << endl;
-				//cout << "Memory location: " << a.get_mem_loc(g);	
+				//cout << "Memory location: " << a.get_mem_loc(g);
 			}
 	}
 
 void commit(vector <process> &a, vector <process> &b, int (&main_mem)[127][1], int (&virtual_mem)[127][1])
 {
-	int frame = 0; 
+	int frame = 0;
 	int frames_needed = 0;
 	int page_per_process = a.at(0).get_operations_size();
 	int process_in_state = a.size();
@@ -71,13 +71,13 @@ void commit(vector <process> &a, vector <process> &b, int (&main_mem)[127][1], i
 	//for (int i = 0; i < a.size(); i++)
 	//{
 	//	frames_needed += a.at(i).get_operations_size();
-	//}	
-	//cout << "frames_needed: "<< frames_needed << endl;	
+	//}
+	//cout << "frames_needed: "<< frames_needed << endl;
 	//assign a page to a frame then the fram to the page
-		
+
 	for(int k = 0;k < page_per_process; k++)
 	{
-	//so the plan is to have the first page in every process be set to a frame so that they always 
+	//so the plan is to have the first page in every process be set to a frame so that they always
 	///go int the ready state however I suppose if someone decides to create 257 process anything greater would
 	//still be in the new state
 		for(int j = 0; j < process_in_state; j++)
@@ -101,13 +101,13 @@ void commit(vector <process> &a, vector <process> &b, int (&main_mem)[127][1], i
 			}i*/
 			frame++;
 			if(frame > 128)
-				break;		
+				break;
 		}
 		if(frame > 128)
 			break;
 
-	}	
-	
+	}
+
 }
 void print_state(vector <process> a, string state)
 {
@@ -127,7 +127,7 @@ void process_swap_states(vector <process> &a, vector <process> &b, int the_proce
 	b.at(b.size() -1).set_state(state);
 }
 
-void decrementation(vector <process> &a, int i, int &process_num, bool &crit, vector <frame> &mem)
+void wait_decrementation(vector <process> &a, int i, int &process_num, bool &crit, frame *mem)
 {
 	if(a.at(i).get_crit(0) == 1)
 	{
@@ -136,7 +136,7 @@ void decrementation(vector <process> &a, int i, int &process_num, bool &crit, ve
 		 	if (process_num == a.at(i).get_process_num())
 			{
 				a.at(i).decrement(crit, mem);
-			}		
+			}
 		}
 		else
 		{
@@ -148,5 +148,28 @@ void decrementation(vector <process> &a, int i, int &process_num, bool &crit, ve
 	else
 	{
 		a.at(i).decrement(crit, mem);
-	}	
+	}
+}
+void run_decrementation(vector <process> &a, int i, int &process_num, bool &crit, frame *mem)
+{
+	if(a.at(i).get_crit(0) == 1)
+	{
+		if (crit == true)
+		{
+		 	if (process_num == a.at(i).get_process_num())
+			{
+				a.at(i).decrement(crit, mem);
+			}
+		}
+		else
+		{
+			crit = true;
+			process_num = a.at(i).get_process_num();
+			a.at(i).decrement(crit, mem);
+		}
+	}
+	else
+	{
+		a.at(i).decrement(crit, mem);
+	}
 }

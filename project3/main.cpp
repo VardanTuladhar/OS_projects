@@ -227,8 +227,7 @@ int main()
 								{
 									shortest_first(ready_queue);
 								}
-
-						}
+							}
 
 						}
 					}
@@ -365,11 +364,6 @@ int main()
 									}
 
 								}
-
-
-
-
-
 						}
 					}
 				}
