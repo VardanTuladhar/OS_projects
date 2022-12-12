@@ -4,8 +4,8 @@
 using namespace std;
 class frame{
 	private:
-		int process_num;
-		int page_num;
+		int process_num = -1;
+		int page_num = -1;
 	public:
 		frame();
 		void set_frame(int process, int page);
