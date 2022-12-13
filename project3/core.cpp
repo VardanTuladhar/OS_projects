@@ -293,6 +293,7 @@ void core :: run_core( frame *main, frame *virt, int cc, string core, int schedu
 																	else
 																	{
 																	int valid1 = this->running.at(0).get_current_op_validbit();
+																	int valid2 = this->running.at(1).get_current_op_validbit();
 																	//cout << "Valid 1:" << valid1 << endl;
 																	//cout << "Valid 2:" << valid2 << endl;
 																	if(valid1  == 1 && valid2 == 1)
