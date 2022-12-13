@@ -99,10 +99,75 @@ int main()
 
 	core core1(new_queue1);
 	core core2(new_queue2);
-	int end_choice;
-	thread t1(&core:: run_core, core1, main1frame, virtual1frame, cycle_count, "Core 1:", scheduling_choice1);
-	thread t2(&core :: run_core, core2, main2frame, virtual2frame, cycle_count, "Core 2:", scheduling_choice2);
-	t1.join();
-	t2.join();
+	int end_choice = 2;
+	int core_sel;
 
+
+	while(run ==true)
+	{
+		if(end_choice == 2){
+			thread t1(&core:: run_core, &core1, main1frame, virtual1frame, cycle_count, "Core 1:", scheduling_choice1, ref(critflag), ref(processflag));
+			thread t2(&core :: run_core, &core2, main2frame, virtual2frame, cycle_count, "Core 2:", scheduling_choice2, ref(critflag), ref(processflag));
+			t1.join();
+			 t2.join();
+}
+	cout << "Core selection:" << endl;
+	cin >> core_sel;
+	cout<< "End of simulation options:" <<endl << "1. exit"<<endl << "2. another run"<< endl<< "3. see the state machine" << endl << "4. see the memory"<<endl << "5. see the new state" <<endl;
+	cin >> end_choice;
+	switch(end_choice)
+	{
+		case 1:
+			run = false;
+
+			break;
+		case 2:
+			cout << "enter number of cycles: ";
+			cin >>cycle_count;
+			break;
+		case 3:
+		if (core_sel == 1)
+		{
+					cout << "Core1" << endl;
+					print_state(core1.get_new_state(), "new");
+					print_state(core1.get_ready_state(), "ready");
+					print_state(core1.get_running_state(), "running");
+					print_state(core1.get_waiting_state(), "waiting");
+					print_state(core1.get_terminated_state(), "terminated");
+					break;
+		}
+		else{
+			cout << "Core2" << endl;
+			print_state(core2.get_new_state(), "new");
+			print_state(core2.get_ready_state(), "ready");
+			print_state(core2.get_running_state(), "running");
+			print_state(core2.get_waiting_state(), "waiting");
+			print_state(core2.get_terminated_state(), "terminated");
+			break;
+		}
+
+		case 4:
+		cout << "Main Memory: \n";
+		cout << "Frame:\tProcess: Page:\n";
+		cout << "------\t------ -------\n";
+		for(int i = 0; i < 128; i++)
+		{
+			cout << i <<"\t";
+			cout<<mainmemory[i].get_process_num()<<"\t";
+			cout<<mainmemory[i].get_page_num()<<endl;
+		}
+		cout << "Virtual Memory: \n";
+		cout << "Frame:\tProcess: Page:\n";
+		cout << "------\t------ -------\n";
+		for(int i = 0; i < 128; i++)
+		{
+			cout << i <<"\t";
+			cout<<virtualmemory[i].get_process_num()<<"\t";
+			cout<<virtualmemory[i].get_page_num()<<endl;
+		}
+
+				break;
+
+	}
+}
 }

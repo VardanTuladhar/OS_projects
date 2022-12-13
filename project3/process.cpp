@@ -11,12 +11,12 @@ process :: process()
 {
 	state = "new";
 	process_num = 0;
-	total_cycles = 0;	
+	total_cycles = 0;
 }
 void process :: set_process_num(int a)
 {
 	this->process_num = a;
-//      	this->ThePCB->set_process_num(a);	
+//      	this->ThePCB->set_process_num(a);
 }
 void process ::set_operations(string temp, int j)
 {
@@ -34,20 +34,20 @@ void process ::set_operations(string temp, int j)
 		this->process_operations.push_back(pro_op);
 		this->total_cycles += cycles;
 		this->total_size += pro_op.size;
-		i++;		
+		i++;
 	}
 	for (int i = 0; i < this->process_operations.size(); i++)
 	{
 		vector<int> page;
 		for (int j =0; j < 2; j++)
 		{
-			page.push_back(0);	
+			page.push_back(0);
 		}
 		this->page_table.push_back(page);
 		//this->memory_location.push_back("Secondary Mem");
 	}
 
-}	
+}
 void process :: setpriority(int a)
 {
 	this->priority = a;
@@ -59,7 +59,7 @@ void process :: set_state(string updated_state)
 }
 int process :: get_priority()
 {
- 	return this->priority; 
+ 	return this->priority;
 }
 string process :: get_state()
 {
@@ -94,13 +94,14 @@ int process :: get_current_op_validbit()
 	int op_ref = this->process_operations.at(0).pageid;
 	return this->get_valid(op_ref);
 }
-	
+
 int process :: get_pageid(int a)
 {
 	return this->process_operations.at(a).pageid;
 }
-void process :: decrement(bool &a, vector <frame> &mm)
+void process :: decrement(bool &a, frame *m)
 {
+	frame *opframe;
 	this->process_operations.at(0).Op_cycles--;
 	this->total_cycles--;
 	if(this->get_operation_cycles(0) <= 0)
@@ -115,7 +116,8 @@ void process :: decrement(bool &a, vector <frame> &mm)
 			int op_ref = this->process_operations.at(0).pageid;
 			int freeframe = this->get_page_frame(op_ref);
 			this->set_page_table(op_ref, freeframe, 0, "done");
-			mm.at(freeframe).set_frame(-1, -1);
+			opframe = m+freeframe;
+			opframe->set_frame(-1, -1);
 			this->process_operations.erase(process_operations.begin());
 		}
 }

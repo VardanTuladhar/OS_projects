@@ -11,7 +11,7 @@ class process{
 		int process_num, total_cycles;
 		int priority;
 		int child_processes;
-		string state;	
+		string state;
 	//	PCB *ThePCB;
 		//vector <string> memory_location;
 		vector <operation> process_operations;
@@ -36,7 +36,7 @@ class process{
 		void set_state(string updated_state);
 		//get the process num
 		int get_process_num();
-		//get the total cycles 
+		//get the total cycles
 		int get_total_cycles();
 		//operation vector size
 		int get_operations_size();
@@ -48,7 +48,7 @@ class process{
 		int get_current_op_validbit();
 		int get_pageid(int a);
 		//decrement the processes current cylce
-		void decrement(bool &a, vector <frame> &mm);
+		void decrement(bool &a, frame *m);
 		//set the page table
 		void set_page_table(int page, int frame, int valid, string mem);
 		//get the page
@@ -58,5 +58,5 @@ class process{
 		//string get_mem_loc(int page);
 
 
-	     };	
+	     };
 #endif

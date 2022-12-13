@@ -127,7 +127,7 @@ void process_swap_states(vector <process> &a, vector <process> &b, int the_proce
 	b.at(b.size() -1).set_state(state);
 }
 
-void wait_decrementation(vector <process> &a, int i, int &process_num, bool &crit, frame *mem)
+/*void wait_decrementation(vector <process> &a, int i, int &process_num, bool &crit, frame *mem)
 {
 	if(a.at(i).get_crit(0) == 1)
 	{
@@ -149,8 +149,8 @@ void wait_decrementation(vector <process> &a, int i, int &process_num, bool &cri
 	{
 		a.at(i).decrement(crit, mem);
 	}
-}
-void run_decrementation(vector <process> &a, int i, int &process_num, bool &crit, frame *mem)
+}*/
+void decrementation(vector <process> &a, int i, int &process_num, bool &crit, frame *mem)
 {
 	if(a.at(i).get_crit(0) == 1)
 	{
