@@ -108,8 +108,8 @@ void core :: run_core( frame *main, frame *virt, int cc, string core, int schedu
 																				{
 																					int valid1 = this->running.at(0).get_current_op_validbit();
 																					int valid2 = this->running.at(0).get_current_op_validbit();
-																					cout << "Valid 1:" << valid1 << endl;
-																					cout << "Valid 2:" << valid2 << endl;
+																					//cout << "Valid 1:" << valid1 << endl;
+																					//cout << "Valid 2:" << valid2 << endl;
 																					if(valid1  == 1 && valid2 == 1)
 																						{
 
@@ -288,13 +288,13 @@ void core :: run_core( frame *main, frame *virt, int cc, string core, int schedu
 																					}
 
 																					}
+																					int valid2 = this->running.at(0).get_current_op_validbit();
 																	}
 																	else
 																	{
 																	int valid1 = this->running.at(0).get_current_op_validbit();
-																	int valid2 = this->running.at(0).get_current_op_validbit();
-																	cout << "Valid 1:" << valid1 << endl;
-																	cout << "Valid 2:" << valid2 << endl;
+																	//cout << "Valid 1:" << valid1 << endl;
+																	//cout << "Valid 2:" << valid2 << endl;
 																	if(valid1  == 1 && valid2 == 1)
 																		{
 																			if(this->running.at(0).get_operation_name(0) == "CALCULATE" && this->running.at(1).get_operation_name(0) == "CALCULATE")
@@ -455,7 +455,7 @@ void core :: run_core( frame *main, frame *virt, int cc, string core, int schedu
 																				{
 																					int valid1 = this->wait_queue.at(i).get_current_op_validbit();
 
-																					cout << "Valid 1:" << valid1 << endl;
+																					//cout << "Valid 1:" << valid1 << endl;
 																					if(valid1  == 1)
 																						{
 																							decrementation(this->wait_queue, i, processflag, critflag, mainstart);
